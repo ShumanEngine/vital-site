@@ -1000,12 +1000,14 @@ h1{font-size:clamp(42px,6vw,88px);line-height:1.05;letter-spacing:-.02em}
 })();
 </script>
 <script>
-/* hero light: follows the pointer softly, drifts slowly on its own when idle */
+/* hero light: bounces around like the DVD logo; follows the pointer softly when it moves */
 (function(){var h=document.querySelector(".hero");if(!h||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-var x=20,y=0,tx=20,ty=0,last=0,t0=performance.now();
+var x=20,y=10,vx=7,vy=11,tx=0,ty=0,last=-1e9,prev=performance.now();
 h.addEventListener("pointermove",function(e){var r=h.getBoundingClientRect();tx=(e.clientX-r.left)/r.width*100;ty=(e.clientY-r.top)/r.height*100;last=performance.now();});
-function f(now){if(h.offsetParent!==null){if(now-last>2500){var t=(now-t0)/1000;tx=24+16*Math.sin(t*.21);ty=10+14*Math.sin(t*.29+1);}
-x+=(tx-x)*.035;y+=(ty-y)*.035;h.style.setProperty("--lx",x.toFixed(2)+"%");h.style.setProperty("--ly",y.toFixed(2)+"%");}requestAnimationFrame(f);}
+function f(now){var dt=Math.min((now-prev)/1000,.05);prev=now;if(h.offsetParent!==null){
+if(now-last<2500){x+=(tx-x)*.05;y+=(ty-y)*.05;}
+else{x+=vx*dt;y+=vy*dt;if(x<4){x=4;vx=Math.abs(vx);}if(x>96){x=96;vx=-Math.abs(vx);}if(y<4){y=4;vy=Math.abs(vy);}if(y>96){y=96;vy=-Math.abs(vy);}}
+h.style.setProperty("--lx",x.toFixed(2)+"%");h.style.setProperty("--ly",y.toFixed(2)+"%");}requestAnimationFrame(f);}
 requestAnimationFrame(f);})();
 </script>
 </body>
