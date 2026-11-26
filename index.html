@@ -337,7 +337,10 @@ h2{font-size:clamp(32px,3.6vw,46px);line-height:1.12}
 }
 
 /* hero */
-.hero{background:radial-gradient(ellipse 70% 65% at 20% 0%,rgba(255,255,255,.16),rgba(255,255,255,0) 70%),var(--ink);color:#fff;padding:clamp(64px,8vw,120px) var(--pad) clamp(72px,9vw,128px);overflow:hidden}
+.hero{position:relative;isolation:isolate;background:var(--ink);color:#fff;padding:clamp(64px,8vw,120px) var(--pad) clamp(72px,9vw,128px);overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse 60% 70% at var(--lx,20%) var(--ly,0%),rgba(255,255,255,.17),rgba(255,255,255,0) 70%);animation:breathe 7s ease-in-out infinite}
+@keyframes breathe{0%,100%{opacity:.8}50%{opacity:1}}
+@media (prefers-reduced-motion:reduce){.hero::before{animation:none}}
 .hero-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(40px,5vw,80px);align-items:center}
 .kicker{margin:0 0 20px;font-family:var(--lat);font-size:clamp(17px,1.6vw,22px);color:var(--teal);direction:ltr;text-align:right;letter-spacing:-.01em}
 h1{font-size:clamp(42px,6vw,88px);line-height:1.05;letter-spacing:-.02em}
@@ -995,6 +998,15 @@ h1{font-size:clamp(42px,6vw,88px);line-height:1.05;letter-spacing:-.02em}
   window.addEventListener('hashchange',show);
   show();
 })();
+</script>
+<script>
+/* hero light: follows the pointer softly, drifts slowly on its own when idle */
+(function(){var h=document.querySelector(".hero");if(!h||matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+var x=20,y=0,tx=20,ty=0,last=0,t0=performance.now();
+h.addEventListener("pointermove",function(e){var r=h.getBoundingClientRect();tx=(e.clientX-r.left)/r.width*100;ty=(e.clientY-r.top)/r.height*100;last=performance.now();});
+function f(now){if(h.offsetParent!==null){if(now-last>2500){var t=(now-t0)/1000;tx=24+16*Math.sin(t*.21);ty=10+14*Math.sin(t*.29+1);}
+x+=(tx-x)*.035;y+=(ty-y)*.035;h.style.setProperty("--lx",x.toFixed(2)+"%");h.style.setProperty("--ly",y.toFixed(2)+"%");}requestAnimationFrame(f);}
+requestAnimationFrame(f);})();
 </script>
 </body>
 </html>
